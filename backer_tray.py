@@ -1,11 +1,13 @@
 import pystray
 import PIL.Image
-import subprocess
+import subprocess, os
 import tkinter as tk
 from tkinter import filedialog
 import os
 import sys
 import threading
+import datetime
+from pathlib import Path
 
 ### --------------------- Functions --------------------- ###
 
@@ -96,7 +98,13 @@ def backup_sequence():
         return
 
     # Get destination path
-    destination = ask_directory("Select destination folder")
+    d = ask_directory("Select destination folder")
+
+    # Crete new subfolder with back-up datetime
+    stamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    destination = str(Path(d) / stamp)
+    os.makedirs(destination, exist_ok=True)
+
     if not destination:
         print("No destination selected.")
         return
