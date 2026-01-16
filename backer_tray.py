@@ -98,12 +98,7 @@ def backup_sequence():
         return
 
     # Get destination path
-    d = ask_directory("Select destination folder")
-
-    # Crete new subfolder with back-up datetime
-    stamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    destination = str(Path(d) / stamp)
-    os.makedirs(destination, exist_ok=True)
+    destination = ask_directory("Select destination folder")
 
     if not destination:
         print("No destination selected.")
@@ -115,7 +110,7 @@ def backup_sequence():
         return
 
     # Flags used for the subprocess
-    flags = ["/e", "/mt"]
+    flags = ["/mt", "/r:2", "/w:5", "/mir" ,"/compress"]
     ans = subprocess.call(["robocopy", source, destination] + flags)
 
     # Subprocess return code check. For code info check robocopy documentation
