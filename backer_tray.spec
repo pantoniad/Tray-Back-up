@@ -5,7 +5,7 @@ a = Analysis(
     ['backer_tray.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('Resources/usb_arrow.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

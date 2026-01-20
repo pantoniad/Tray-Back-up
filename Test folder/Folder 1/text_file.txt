@@ -1,0 +1,2 @@
+1120: This is a log
+1130: This is the third log, second log was deleted
