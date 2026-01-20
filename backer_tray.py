@@ -8,6 +8,7 @@ import sys
 import threading
 import datetime
 from pathlib import Path
+import tempfile
 
 ### --------------------- Functions --------------------- ###
 
@@ -34,7 +35,7 @@ def ask_directory(title):
     root.destroy()  
     return path
 
-def resource_path(relative_path):
+def resource_path(relative_path: str) -> str:
     """
     resource_path: gets the absolute path to the resource needed
 
@@ -47,12 +48,10 @@ def resource_path(relative_path):
     """
 
     # Get tha absolute path from the temporary unpacked directory
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
+    if getattr(sys, "frozen", False) and hasattr(sys, '_MEIPASS'):
+        return str(Path(sys._MEIPASS) / relative_path)
     
-    # Construct the absolute path
-    absolute_path = os.path.join(os.path.abspath("."), relative_path)
-    return absolute_path
+    return str(Path(__file__).resolve().parent / relative_path)
 
 # Create trigger function 
 def clicked(icon, item):
@@ -72,6 +71,9 @@ def clicked(icon, item):
     # Use threading
     if str(item) == "Backup data?":
         threading.Thread(target=backup_sequence).start()
+    
+    elif str(item) == "Information":
+        pass
 
     # Terminate the tray app
     elif str(item) == "Exit":
@@ -165,13 +167,19 @@ def confirm_copy(source, destination):
 
 ### --------------------- Execution --------------------- ###
 
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    print('running in a PyInstaller bundle')
+else:
+    print('running in a normal Python process')
+
 # Call image path for the icon
-image_path = resource_path(r"C:\GitHub\Tray-Back-up\usb_arrow.png")
+image_path = resource_path(r"usb_arrow.png")
 image = PIL.Image.open(image_path)
 
 # Create icon object
-icon = pystray.Icon("BackUp", image, menu = pystray.Menu(
+icon = pystray.Icon("BackUp", icon = image, menu = pystray.Menu(
     pystray.MenuItem("Backup data?", clicked),
+    pystray.MenuItem("Information", clicked),
     pystray.MenuItem("Exit", clicked)
 ))
 
